@@ -15,17 +15,6 @@ import os
 
 for t in range(ini.T):
 
-    #ini.ux0 = ini.ux0 + sin(t*pi/7)/50
-    #Zou and He velocity BCs on west side
-    # for j in range(ini.sizeY_+2):
-    #     for i in range(1,ini.sizeX_+1):
-    #         if ini.m[i,j] == 2:
-    #             ini.rho[i,j] = (ini.f[i,j,0] + ini.f[i,j,2] + ini.f[i,j,4] + 2.*(ini.f[i,j,3] + ini.f[i,j,7] + ini.f[i,j,6])) / (1 - ini.ux0*(1 + 1e-4*sin(2*j*pi/ini.sizeY_)))
-    #             ru = ini.rho[i,j]*ini.ux0*(1 + 1e-3*sin(2*j*pi/ini.sizeY_))
-    #             ini.f[i,j,1] = ini.f[i,j,3] + (2./3.)*ru
-    #             ini.f[i,j,5] = ini.f[i,j,7] + (1./6.)*ru - (1./2.)*(ini.f[i,j,2] - ini.f[i,j,4])# + sin(t*pi/7)/2
-    #             ini.f[i,j,8] = ini.f[i,j,6] + (1./6.)*ru - (1./2.)*(ini.f[i,j,4] - ini.f[i,j,2])# - sin(t*pi/7)/2
-
     #For smoothing, test friday 19/10/2018
     if t == 0:
         ini.tau0 = 2.*ini.tau0
@@ -33,23 +22,12 @@ for t in range(ini.T):
     if t == 100:
         ini.tau0 = ini.tau0/2.
 
-    #special case for speed
+    #Zou and He velocity BCs on west side
     ini.rho[1,:] = (ini.f[1,:,0] + ini.f[1,:,2] + ini.f[1,:,4] + 2.*(ini.f[1,:,3] + ini.f[1,:,7] + ini.f[1,:,6])) / (1 - ini.ux0*(1 + 1e-4*sin(2.*arange(ini.sizeY_+2)*pi/ini.sizeY_)))
     ru = ini.rho[1,:]*ini.ux0*(1 + 1e-4*sin(2*arange(ini.sizeY_+2)*pi/ini.sizeY_ + 2))
     ini.f[1,:,1] = abs(ini.f[1,:,3] + (2./3.)*ru)
     ini.f[1,:,5] = abs(ini.f[1,:,7] + (1./6.)*ru - (1./2.)*(ini.f[1,:,2] - ini.f[1,:,4]))# + sin(t*pi/7)/2
     ini.f[1,:,8] = abs(ini.f[1,:,6] + (1./6.)*ru - (1./2.)*(ini.f[1,:,4] - ini.f[1,:,2]))# - sin(t*pi/7)/2
-
-    # Zou and He velocity BCs on south side
-    # for j in range(1,ini.sizeY_+1):
-    #     for i in range(1,ini.sizeX_+1):
-    #         if ini.m[i,j] == 3:
-    #             ini.rho[i,j] = (ini.f[i,j,0] + ini.f[i,j,1] + ini.f[i,j,3] + 2.*(ini.f[i,j,4] + ini.f[i,j,7] + ini.f[i,j,8])) / (1 - ini.uy0)
-    #             ru = ini.rho[i,j]*ini.uy0
-    #             ini.f[i,j,2] = ini.f[i,j,4] + (2./3.)*ru
-    #             ini.f[i,j,5] = ini.f[i,j,7] + (1./6.)*ru - (1./2.)*(ini.f[i,j,1] - ini.f[i,j,3])
-    #             ini.f[i,j,6] = ini.f[i,j,8] + (1./6.)*ru - (1./2.)*(ini.f[i,j,3] - ini.f[i,j,1])
-                
 
     # ... computing density for imaging
     ini.rho[:,:] = 0.
@@ -100,8 +78,6 @@ for t in range(ini.T):
         ini.rho[1:ini.sizeX_+1,:] += ini.ftemp[1:ini.sizeX_+1,:,a]    
         ini.ux[1:ini.sizeX_+1,:] += ini.e_[0,a]*ini.ftemp[1:ini.sizeX_+1,:,a]
         ini.uy[1:ini.sizeX_+1,:] += ini.e_[1,a]*ini.ftemp[1:ini.sizeX_+1,:,a]
-    # ini.ux[1:ini.sizeX_+1,:] = np.where(ini.rho[1:ini.sizeX_+1,:] > ini.f_tol, ini.ux[1:ini.sizeX_+1,:]/ini.rho[1:ini.sizeX_+1,:], ini.ux[1:ini.sizeX_+1,:]/(9.*ini.f_tol))
-    # ini.uy[1:ini.sizeX_+1,:] = np.where(ini.rho[1:ini.sizeX_+1,:] > ini.f_tol, ini.uy[1:ini.sizeX_+1,:]/ini.rho[1:ini.sizeX_+1,:], ini.uy[1:ini.sizeX_+1,:]/(9.*ini.f_tol))
     ini.ux[1:ini.sizeX_+1,:] = ini.ux[1:ini.sizeX_+1,:]/ini.rho[1:ini.sizeX_+1,:]
     ini.uy[1:ini.sizeX_+1,:] = ini.uy[1:ini.sizeX_+1,:]/ini.rho[1:ini.sizeX_+1,:]
     ini.u[1:ini.sizeX_+1,:] = sqrt((ini.ux[1:ini.sizeX_+1,:]**2 + ini.uy[1:ini.sizeX_+1,:]**2)/2)
@@ -126,12 +102,6 @@ for t in range(ini.T):
     # #F_drag = F_drag
     # ini.Ft[t] = F_drag 
 
-    #Computing equilibrium distribution function
-    # for j in range(ini.sizeY_+2):
-    #     j_n = (j-1) if j > 0 else (ini.sizeY_+1)
-    #     j_p = (j+1) if j < (ini.sizeY_ + 1) else 0 
-    #     for i in range(1,ini.sizeX_+ 1):
-    #         if ini.m[i,j] == 0:
     fct1 = ini.w[0]*ini.rho[:,:]
     fct2 = ini.w[1]*ini.rho[:,:]
     fct3 = ini.w[2]*ini.rho[:,:]
@@ -161,17 +131,9 @@ for t in range(ini.T):
 
     #Collision step
 
-    # ini.tau[:,:,:] = maximum(ini.tau0, (1 - (ini.feq[:,:,:]/ini.f[:,:,:])))
-    # for a in range(9):
-    #    ini.f[1:ini.sizeX_+1,:,a] = np.where(ini.m[1:ini.sizeX_+1,:] == 0, ini.ftemp[1:ini.sizeX_+1,:,a] - (ini.ftemp[1:ini.sizeX_+1,:,a] - ini.feq[1:ini.sizeX_+1,:,a]) / ini.tau[1:ini.sizeX_+1,:,a], ini.f[1:ini.sizeX_+1,:,a])
-    #    #ini.f[1:ini.sizeX_+1,:,a] = np.where(ini.m[1:ini.sizeX_+1,:] == 0, ini.ftemp[1:ini.sizeX_+1,:,a] - (ini.ftemp[1:ini.sizeX_+1,:,a] - ini.feq[1:ini.sizeX_+1,:,a]) / ini.tau0, ini.f[1:ini.sizeX_+1,:,a])
-
-    #ONLY TEST BEFORE FRIDAY PRAYER 19/10
     ini.tau[:,:,:] = maximum(ini.tau0, (1 - (ini.feq[:,:,:]/ini.ftemp[:,:,:])))
     for a in range(9):
        ini.f[1:ini.sizeX_+1,:,a] = np.where(ini.m[1:ini.sizeX_+1,:] == 0, ini.ftemp[1:ini.sizeX_+1,:,a] - (ini.ftemp[1:ini.sizeX_+1,:,a] - ini.feq[1:ini.sizeX_+1,:,a]) / ini.tau[1:ini.sizeX_+1,:,a], ini.f[1:ini.sizeX_+1,:,a])
-       #ini.f[1:ini.sizeX_+1,:,a] = np.where(ini.m[1:ini.sizeX_+1,:] == 0, ini.ftemp[1:ini.sizeX_+1,:,a] - (ini.ftemp[1:ini.sizeX_+1,:,a] - ini.feq[1:ini.sizeX_+1,:,a]) / ini.tau0, ini.f[1:ini.sizeX_+1,:,a])
-
 
     #Plotting 
     print "Time = ", t
@@ -179,12 +141,11 @@ for t in range(ini.T):
     print "Velocity x dir = ", sum(ini.ux)
     print "Velocity y dir = ", sum(ini.uy)
     print ini.f[2:ini.sizeX_,2:ini.sizeY_,:].min()
-    #print ini.ux[ini.sizeX_//2,ini.sizeY_//2] 
-
     #To save the density and velocity distribution
     # np.save(os.path.join(ini.name, "rho_" + ini.name + "_" + str(t).zfill(4)), ini.rho)
     # np.save(os.path.join(ini.name, "ux_" + ini.name + "_" + str(t).zfill(4)), ini.ux)     
 
+    #Plotting the heatmaps
     if mod(t,100) == 0:
         varm = ini.u.transpose()        #Change the variable to the one that will be plotted: rho, ux, or uy
         plt.figure(1)
@@ -197,17 +158,6 @@ for t in range(ini.T):
         #plt.pause(0.001)
         plt.savefig("vel."+ini.name2+"_"+str(t).zfill(6)+".png")
         plt.clf()
-
-    #Plot cross-section velocity
-    # plt.figure(2)
-    # plt.plot(ini.ux[-2,:],label='Outlet')
-    # plt.plot(ini.ux[(ini.sizeX_+2)//2,:],label='Middle')
-    # plt.plot(ini.ux[2,:],label='Inlet')
-    # plt.legend(loc='upper right')
-    # plt.show
-    # plt.pause(0.001)
-    # plt.clf()
-
     
     #Plot drag force vs time
     # if mod(t,5) == 0:
@@ -218,7 +168,7 @@ for t in range(ini.T):
     #     plt.pause(0.001)
     #     plt.clf()
 
-#To save the force
+#To save the drag force
 # np.save(os.path.join(ini.name, "dragForce_" + ini.name), ini.Ft)
 
 ####################################################### OUTPUT ###########################################################################

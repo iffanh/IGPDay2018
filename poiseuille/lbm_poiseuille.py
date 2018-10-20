@@ -14,7 +14,6 @@ import os
 
 for t in range(ini.T):
 
-    #ini.ux0 = ini.ux0 + sin(t*pi/7)/50
     #Zou and He velocity BCs on west side
     for j in range(1,ini.sizeY_+1):
         for i in range(1,ini.sizeX_+1):
@@ -25,17 +24,6 @@ for t in range(ini.T):
                 ini.f[i,j,5] = ini.f[i,j,7] + (1./6.)*ru - (1./2.)*(ini.f[i,j,2] - ini.f[i,j,4])
                 ini.f[i,j,8] = ini.f[i,j,6] + (1./6.)*ru - (1./2.)*(ini.f[i,j,4] - ini.f[i,j,2])
     
-    #Zou and He velocity BCs on south side
-    for j in range(1,ini.sizeY_+1):
-        for i in range(1,ini.sizeX_+1):
-            if ini.m[i,j] == 3:
-                ini.rho[i,j] = (ini.f[i,j,0] + ini.f[i,j,1] + ini.f[i,j,3] + 2.*(ini.f[i,j,4] + ini.f[i,j,7] + ini.f[i,j,8])) / (1 - ini.uy0)
-                ru = ini.rho[i,j]*ini.uy0
-                ini.f[i,j,2] = ini.f[i,j,4] + (2./3.)*ru
-                ini.f[i,j,5] = ini.f[i,j,7] + (1./6.)*ru - (1./2.)*(ini.f[i,j,1] - ini.f[i,j,3])
-                ini.f[i,j,6] = ini.f[i,j,8] + (1./6.)*ru - (1./2.)*(ini.f[i,j,3] - ini.f[i,j,1])
-                
-
     # ... computing density for imaging
     ini.rho[:,:] = 0.
     for a in range(9):
@@ -139,14 +127,14 @@ for t in range(ini.T):
         np.save(os.path.join(ini.name, "rho_" + ini.name + "_" + str(t).zfill(4)), ini.rho)
         np.save(os.path.join(ini.name, "ux_" + ini.name + "_" + str(t).zfill(4)), ini.ux)
 
-    # if mod(t,1) == 0:
-    #     varm = ini.rho.transpose()        #Change the variable to the one that will be plotted: rho, ux, or uy
-    #     plt.figure(1)
-    #     #ax = sns.heatmap(varm, annot=False, vmin=0., vmax=3.0, cmap='RdYlBu_r')           #For ux
-    #     ax = sns.heatmap(varm, annot=False, vmin=5.*ini.f_init, vmax=15*ini.f_init, cmap='RdYlBu_r')           #For rho
-    #     ax.invert_yaxis()
-    #     plt.pause(1.)
-    #     plt.clf()
+    if mod(t,1) == 0:
+        varm = ini.rho.transpose()        #Change the variable to the one that will be plotted: rho, ux, or uy
+        plt.figure(1)
+        #ax = sns.heatmap(varm, annot=False, vmin=0., vmax=3.0, cmap='RdYlBu_r')           #For ux
+        ax = sns.heatmap(varm, annot=False, vmin=5.*ini.f_init, vmax=15*ini.f_init, cmap='RdYlBu_r')           #For rho
+        ax.invert_yaxis()
+        plt.pause(1.)
+        plt.clf()
 
     # #Plot cross-section velocity
     # plt.figure(2)
@@ -161,10 +149,10 @@ for t in range(ini.T):
     # plt.pause(0.001)
     # plt.clf()
 
-    #For calculation purposes
-    print "Upstream: ", ini.rho[(ini.sizeX_+2)//2 - 2,(ini.sizeY_+2)//2]
-    print "Downstream: ", ini.rho[(ini.sizeX_+2)//2 + 2,(ini.sizeY_+2)//2]
-    print "umax: ", ini.ux[(ini.sizeX_+2)//2 + 2,(ini.sizeY_+2)//2]
+    ##For calculation purposes
+    #print "Upstream: ", ini.rho[(ini.sizeX_+2)//2 - 2,(ini.sizeY_+2)//2]
+    #print "Downstream: ", ini.rho[(ini.sizeX_+2)//2 + 2,(ini.sizeY_+2)//2]
+    #print "umax: ", ini.ux[(ini.sizeX_+2)//2 + 2,(ini.sizeY_+2)//2]
 
 ####################################################### OUTPUT ###########################################################################
 

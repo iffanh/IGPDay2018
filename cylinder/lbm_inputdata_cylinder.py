@@ -7,8 +7,7 @@ import scipy.io as sp
 m = genfromtxt('../porestructure/cylinder2_45.dat', delimiter="\t")
 m = m.transpose()
 
-name = "r45_u3"
-name2 = "Re50_tauc_cy45"
+name2 = "Re50_cy45"
 
 #What we have now:
 # 1. channel_5.dat
@@ -22,28 +21,28 @@ name2 = "Re50_tauc_cy45"
 
 print m
 
-sizeX_ = len(m) - 2         #length in x-direction
-sizeY_ = len(m[0]) - 2        #length in y-direction
+sizeX_ = len(m) - 2                         #length in x-direction
+sizeY_ = len(m[0]) - 2                      #length in y-direction
 
 #The number of iteration
-T = 20000            #Total time used in the simulation
-dt = 1             #time interval
+T = 20000                                   #Total time used in the simulation
+dt = 1                                      #time interval
 
 #Declaring variables
 
-rho = zeros((sizeX_+2,sizeY_+2))                         #Density of the lattice point, 
-ux = zeros((sizeX_+2,sizeY_+2))                          #Macroscopic velocity of the lattice point 
+rho = zeros((sizeX_+2,sizeY_+2))            #Density of the lattice point, 
+ux = zeros((sizeX_+2,sizeY_+2))             #Macroscopic velocity of the lattice point 
 uy = zeros((sizeX_+2,sizeY_+2))
 u = zeros((sizeX_+2,sizeY_+2))
-uxeq = zeros((sizeX_+2,sizeY_+2))                        #Macroscopic velocity of the lattice point 
+uxeq = zeros((sizeX_+2,sizeY_+2))           #Macroscopic velocity of the lattice point 
 uyeq = zeros((sizeX_+2,sizeY_+2))
-f = zeros((sizeX_+2,sizeY_+2,9))      #Density distribution of the a point f[x position][y position][index]
+f = zeros((sizeX_+2,sizeY_+2,9))            #Density distribution of the a point f[x position][y position][index]
 ftemp = zeros((sizeX_+2,sizeY_+2,9))
 feq = zeros((sizeX_+2,sizeY_+2,9))
 tau = zeros((sizeX_+2,sizeY_+2,9))
 Ft = zeros(T)
 
-uxeq = zeros((sizeX_+2,sizeY_+2))                                       #uxeq will incorporate external forces, if any
+uxeq = zeros((sizeX_+2,sizeY_+2))           #uxeq will incorporate external forces, if any
 uyeq = zeros((sizeX_+2,sizeY_+2)) 
 uxsq = zeros((sizeX_+2,sizeY_+2))
 uysq = zeros((sizeX_+2,sizeY_+2))
@@ -59,7 +58,7 @@ Re_x = 50.
 ux0 = 0.04
 uy0 = 0.2
 r = 45./2.   
-visc = ux0*r/Re_x             #kinematic viscosity
+visc = ux0*r/Re_x                           #kinematic viscosity
 tau0 = 3*visc + 0.5                
 e_ = array([[0.0, 1.0, 0.0, -1.0, 0.0, 1.0, -1.0, -1.0, 1.0],[0.0, 0.0, 1.0, 0.0, -1.0, 1.0, 1.0, -1.0, -1.0]])         
 w = array([4.0/9.0, 1.0/9.0, 1.0/36.0])
